@@ -67,11 +67,49 @@ travel_time_data* read_travel_times_from_csv(char* filename, int* num_records) {
     // Devolver el arreglo de datos
     return data;
 }
+//create a function called ingresar origen that receives a pointer to a struct travel_time_data and wait for input, verifies if the input is between 1 and 1160, if it is, it saves the input on the struct, else it prints an error message
+void ingresar_origen(travel_time_data* v){
+    int origen;
+    printf("Ingrese el origen: \n");
+    scanf("%d", &origen);
+    if(origen >= 1 && origen <= 1160){
+        v->sourceid = origen;
+    }
+    else{
+        printf("El origen debe estar entre 1 y 1160\n");
+    }
+}
+//create a function called ingresar destino that receives a pointer to a struct travel_time_data and wait for input, verifies if the input is between 1 and 1160, if it is, it saves the input on the struct, else it prints an error message
+void ingresar_destino(travel_time_data* v){
+    int destino;
+    printf("Ingrese el destino: \n");
+    scanf("%d", &destino);
+    if(destino >= 1 && destino <= 1160){
+        v->dstid = destino;
+    }
+    else{
+        printf("El destino debe estar entre 1 y 1160\n");
+    }
+}
+//create a function called ingresar hora that receives a pointer to a struct travel_time_data and wait for input, verifies if the input is between 0 and 23, if it is, it saves the input on the struct, else it prints an error message
+void ingresar_hora(travel_time_data* v){
+    int hora;
+    printf("Ingrese la hora: \n");
+    scanf("%d", &hora);
+    if(hora >= 0 && hora <= 23){
+        v->hod = hora;
+    }
+    else{
+        printf("La hora debe estar entre 0 y 23\n");
+    }
+}
 
 int main() {
+
     // Leer los datos de tiempo de viaje desde el archivo csv
     int num_records = 0;
-    travel_time_data* data = read_travel_times_from_csv("travel_times.csv", &num_records);
+    travel_time_data* data = read_travel_times_from_csv("datos.csv", &num_records);
+    //print data
 
     // Menú de opciones
     int option = 0;
@@ -79,9 +117,8 @@ int main() {
     int dstid = 0;
     int hod = 0;
     float mean_travel_time = 0.0;
-    travel_time_data mi_viaje;
-    travel_time_data *p_mi_viaje;
-    p_mi_viaje = &mi_viaje;
+    travel_time_data viaje;
+
     //declare a pointer to v
     while (option != 5) {
         printf("Bienvenido\n");
@@ -94,17 +131,22 @@ int main() {
         scanf("%d", &option);
     switch (option) {
             case 1:
-             ingresar_origen(*v);
+             ingresar_origen(&viaje);
+                break;
             case 2:
-                // Código para ingresar ID de origen
+                // Código para ingresar destino
                 // ...
+                ingresar_destino(&viaje);
+                break;
             case 3:
-                // Código para ingresar hora del día
+                // Código para ingresar hora
                 // ...
-
+                ingresar_hora(&viaje);
+                break;
             case 4:
                 // Código para buscar tiempo de viaje medio
                 // ...
+                break;
             case 5:
                 // Salir del programa
                 printf("Saliendo del programa...\n");
@@ -114,24 +156,11 @@ int main() {
                 break;
         }
     }
-        #include <stdio.h>
 }
 //create a function called ingresar origen that receives a pointer to a struct travel_time_data and wait for input, the input is saved on the struct
-void ingresar_origen(travel_time_data *v){
-    printf("Ingrese el origen: ");
-    scanf("%d", &v->sourceid);
-}
-//create a function called ingresar destino that receives a pointer to a struct travel_time_data and wait for input, the input is saved on the struct
-void ingresar_destino(travel_time_data *v){
-    printf("Ingrese el destino: ");
-    scanf("%d", &v->dstid);
-}//create a function called ingresar hora that receives a pointer to a struct travel_time_data and wait for input, the input is saved on the struct
-void ingresar_hora(travel_time_data *v){
-    printf("Ingrese la hora: ");
-    scanf("%d", &v->hod);
-}
+
 //create a function called buscar tiempo de viaje medio that receives a pointer to a struct viaje and checks if sourceid, dstid and hod exists on the struct, if it does, it prints the mean travel time
-void buscar_tiempo_viaje_medio(travel_time_data *v){
+/*void buscar_tiempo_viaje_medio(travel_time_data *v){
     if(v->sourceid != 0 && v->dstid != 0 && v->hod != 0){
         printf("El tiempo de viaje medio es: %f", v->mean_travel_time);
     }
@@ -172,4 +201,4 @@ free(table.buckets);
 return 0;
 
 
-}
+}*/
