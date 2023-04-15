@@ -2,57 +2,113 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TABLE_SIZE 10 // Tamaño de la tabla hash
+#define MAX_LINE_LENGTH 1000
+#define NUM_HOURS 24
 
-// Estructura para los nodos de la tabla hash
-struct Node {
-    char key[100]; // Clave
-    int value;     // Valor asociado
-    struct Node* next; // Puntero al siguiente nodo
-};
+typedef struct {
+    int sourceid;
+    int dstid;
+    float mean_travel_time[NUM_HOURS];
+} TravelData;
 
-// Función para crear un nuevo nodo
-struct Node* createNode(const char* key, int value) {
-    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
-    strncpy(newNode->key, key, sizeof(newNode->key));
-    newNode->value = value;
-    newNode->next = NULL;
-    return newNode;
+typedef struct Node {
+    TravelData data;
+    struct Node* next;
+} Node;
+
+typedef struct {
+    Node** buckets;
+    int num_buckets;
+} HashTable;
+
+int hash(int sourceid, int dstid, int num_buckets) {
+    return (sourceid * 31 + dstid) % num_buckets;
 }
 
-// Función hash para calcular el índice de la clave en la tabla
-int hash(const char* key) {
-    int sum = 0;
-    for (int i = 0; i < strlen(key); i++) {
-        sum += key[i];
-    }
-    return sum % TABLE_SIZE;
+void insert(HashTable* table, TravelData data) {
+    int bucket = hash(data.sourceid, data.dstid, table->num_buckets);
+    Node* node = (Node*) malloc(sizeof(Node));
+    node->data = data;
+    node->next = table->buckets[bucket];
+    table->buckets[bucket] = node;
 }
 
-// Función para insertar un par clave-valor en la tabla hash
-void insert(struct Node* hashTable[], const char* key, int value) {
-    int index = hash(key);
-    struct Node* newNode = createNode(key, value);
-    if (hashTable[index] == NULL) {
-        hashTable[index] = newNode;
-    } else {
-        struct Node* current = hashTable[index];
-        while (current->next != NULL) {
-            current = current->next;
+TravelData* lookup(HashTable* table, int sourceid, int dstid) {
+    int bucket = hash(sourceid, dstid, table->num_buckets);
+    Node* node = table->buckets[bucket];
+    while (node != NULL) {
+        if (node->data.sourceid == sourceid && node->data.dstid == dstid) {
+            return &(node->data);
         }
-        current->next = newNode;
+        node = node->next;
     }
+    return NULL;
 }
 
-// Función para buscar el valor asociado a una clave en la tabla hash
-int search(struct Node* hashTable[], const char* key) {
-    int index = hash(key);
-    struct Node* current = hashTable[index];
-    while (current != NULL) {
-        if (strcmp(current->key, key) == 0) {
-            return current->value;
-        }
-        current = current->next;
+void read_csv(char* filename, HashTable* table) {
+    FILE* file = fopen(filename, "r");
+    if (file == NULL) {
+        fprintf(stderr, "Error: Could not open file %s\n", filename);
+        exit(1);
     }
-    return -1; // Si la clave no se encuentra en la tabla
+
+    char line[MAX_LINE_LENGTH];
+    int line_num = 0;
+    while (fgets(line, MAX_LINE_LENGTH, file)) {
+        line_num++;
+        if (line_num == 1) {
+            continue; // skip header row
+        }
+
+        char* sourceid_str = strtok(line, ",");
+        char* dstid_str = strtok(NULL, ",");
+        char* hod_str = strtok(NULL, ",");
+        char* mean_travel_time_str = strtok(NULL, ",");
+
+        int sourceid = atoi(sourceid_str);
+        int dstid = atoi(dstid_str);
+        int hod = atoi(hod_str);
+        float mean_travel_time = atof(mean_travel_time_str);
+
+        TravelData* data = lookup(table, sourceid, dstid);
+        if (data == NULL) {
+            TravelData new_data = { sourceid, dstid, { 0 } };
+            insert(table, new_data);
+            data = lookup(table, sourceid, dstid);
+        }
+        data->mean_travel_time[hod] = mean_travel_time;
+    }
+
+    fclose(file);
 }
+
+int main() {
+    HashTable table = { NULL, 0 };
+    table.num_buckets = 1160 * 1160;
+    table.buckets = (Node**) calloc(table.num_buckets, sizeof(Node*));
+
+    read_csv("datos.csv", &table);
+
+    int sourceid = 5;
+    int dstid = 451;
+    TravelData* data = lookup(&table, sourceid, dstid);
+    if (data != NULL) {
+        printf("Mean travel time from %d to %d:\n", sourceid, dstid);
+        for (int hod = 0; hod < NUM_HOURS; hod++) {
+            printf("%d: %.2f minutes\n", hod, data->mean_travel_time[hod]);
+}
+} else {
+printf("No data found for %d -> %d\n", sourceid, dstid);
+}
+// Free memory
+for (int i = 0; i < table.num_buckets; i++) {
+    Node* node = table.buckets[i];
+    while (node != NULL) {
+        Node* next_node = node->next;
+        free(node);
+        node = next_node;
+    }
+}
+free(table.buckets);
+
+return 0;}
