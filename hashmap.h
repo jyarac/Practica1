@@ -82,33 +82,4 @@ void read_csv(char* filename, HashTable* table) {
     fclose(file);
 }
 
-int main() {
-    HashTable table = { NULL, 0 };
-    table.num_buckets = 1160 * 1160;
-    table.buckets = (Node**) calloc(table.num_buckets, sizeof(Node*));
 
-    read_csv("datos.csv", &table);
-
-    int sourceid = 5;
-    int dstid = 451;
-    TravelData* data = lookup(&table, sourceid, dstid);
-    if (data != NULL) {
-        printf("Mean travel time from %d to %d:\n", sourceid, dstid);
-        for (int hod = 0; hod < NUM_HOURS; hod++) {
-            printf("%d: %.2f minutes\n", hod, data->mean_travel_time[hod]);
-}
-} else {
-printf("No data found for %d -> %d\n", sourceid, dstid);
-}
-// Free memory
-for (int i = 0; i < table.num_buckets; i++) {
-    Node* node = table.buckets[i];
-    while (node != NULL) {
-        Node* next_node = node->next;
-        free(node);
-        node = next_node;
-    }
-}
-free(table.buckets);
-
-return 0;}
