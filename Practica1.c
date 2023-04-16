@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "hashmap.h"
-
+#include "hash.h"
+#include <unistd.h>
 // Definición de la estructura de datos para almacenar la información de tiempos de viaje
 typedef struct{
     int sourceid;
@@ -105,12 +105,22 @@ void ingresar_hora(travel_time_data* v){
 }
 
 int main() {
+    
+    //create a if statement that verifies if the file hash.bin exist if it does, it calls hashDocument function with parameters datos.csv, hash.bin and 1160, else it calls hashDocument function with parameters datos.csv, hash.bin and 1160
+    if (access("tabla_hash.bin", F_OK) == -1) {
+        char *args[] = {"hashDocument", "datos.csv", "tabla_hash.bin", NULL};
+        int argc = sizeof(args) / sizeof(char *) - 1;
+        hashDocument(argc, args);
+        //print 'document hashed'
+        printf("Document hashed\n");
 
+    }
     // Leer los datos de tiempo de viaje desde el archivo csv
+    /*
     int num_records = 0;
     travel_time_data* data = read_travel_times_from_csv("datos.csv", &num_records);
     //print data
-
+*/
     // Menú de opciones
     int option = 0;
     int sourceid = 0;
