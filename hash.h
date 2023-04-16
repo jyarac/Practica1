@@ -3,7 +3,16 @@
 #include <string.h>
 
 #define MAX_LINE_LENGTH 5024
-#define HASH_SIZE 1160
+#define HASH_SIZE 116000
+typedef struct{
+    int sourceid;
+    int dstid;
+    int hod;
+    float mean_travel_time;
+    float standard_deviation_travel_time;
+    float geometric_mean_travel_time;
+    float geometric_standard_deviation_travel_time;
+} travel_time_data;
 
 typedef struct {
     int sourceid;
@@ -25,6 +34,62 @@ typedef struct {
 int hash_function(int key) {
     return key % HASH_SIZE;
 }
+
+//Funciones de la antigua libreria leer
+
+void load_table(hash_table *table, char *filename) {
+    FILE *fp = fopen(filename, "rb");
+    if (fp == NULL) {
+        fprintf(stderr, "Error: could not open file '%s'\n", filename);
+        exit(EXIT_FAILURE);
+    }
+
+    fread(table, sizeof(hash_table), 1, fp);
+
+    fclose(fp);
+}
+travel_data *findl(hash_table *table, int sourceid, int dstid, int hod) {
+    int key = sourceid * HASH_SIZE + dstid;
+    int index = hash_function(key);
+    int i = index;
+    do {
+        if (table->nodes[i].key == 0) {
+            return NULL;
+        }
+        if (table->nodes[i].key == key &&
+            table->nodes[i].value.sourceid == sourceid &&
+            table->nodes[i].value.dstid == dstid &&
+            table->nodes[i].value.hod == hod) {
+            return &table->nodes[i].value;
+        }
+        i = (i + 1) % HASH_SIZE;
+    } while (i != index);
+    return NULL;
+}
+int search(int argc, char *argv[], travel_time_data travel) {
+    if (argc < 2) {
+        fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
+
+    char *input_file = argv[1];
+
+    hash_table table = {0};
+    load_table(&table, input_file);
+
+    travel_data *data = findl(&table, travel.sourceid, travel.dstid, travel.hod);
+    if (data != NULL) {
+        printf("mean_travel_time = %.2f\n", data->mean_travel_time);
+    } else {
+        printf("NA\n");
+    }
+
+    return EXIT_SUCCESS;
+}
+
+
+//funciones de libreria hash-
+
 
 void insert(hash_table *table, int key, travel_data value) {
     int index = hash_function(key);
@@ -90,7 +155,6 @@ void load_data(hash_table *table, char *filename) {
 
     fclose(fp);
 }
-
 void save_table(hash_table *table, char *filename) {
     FILE *fp = fopen(filename, "wb");
     if (fp == NULL) {

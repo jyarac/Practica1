@@ -4,15 +4,7 @@
 #include "hash.h"
 #include <unistd.h>
 // Definición de la estructura de datos para almacenar la información de tiempos de viaje
-typedef struct{
-    int sourceid;
-    int dstid;
-    int hod;
-    float mean_travel_time;
-    float standard_deviation_travel_time;
-    float geometric_mean_travel_time;
-    float geometric_standard_deviation_travel_time;
-} travel_time_data;
+
 
 // Función para leer los datos de tiempo de viaje desde un archivo csv y almacenarlos en un arreglo de estructuras de datos
 travel_time_data* read_travel_times_from_csv(char* filename, int* num_records) {
@@ -101,8 +93,8 @@ void ingresar_hora(travel_time_data* v){
     }
     else{
         printf("La hora debe estar entre 0 y 23\n");
-    }
-}
+    }}
+
 
 int main() {
     
@@ -115,12 +107,6 @@ int main() {
         printf("Document hashed\n");
 
     }
-    // Leer los datos de tiempo de viaje desde el archivo csv
-    /*
-    int num_records = 0;
-    travel_time_data* data = read_travel_times_from_csv("datos.csv", &num_records);
-    //print data
-*/
     // Menú de opciones
     int option = 0;
     int sourceid = 0;
@@ -154,8 +140,9 @@ int main() {
                 ingresar_hora(&viaje);
                 break;
             case 4:
-                // Código para buscar tiempo de viaje medio
-                // ...
+                //use the search function in the leer.h using the pointer to viaje
+                char *args[] = {"datos.csv", "tabla_hash.bin"};
+                search(2, args, viaje);
                 break;
             case 5:
                 // Salir del programa
@@ -169,46 +156,4 @@ int main() {
 }
 //create a function called ingresar origen that receives a pointer to a struct travel_time_data and wait for input, the input is saved on the struct
 
-//create a function called buscar tiempo de viaje medio that receives a pointer to a struct viaje and checks if sourceid, dstid and hod exists on the struct, if it does, it prints the mean travel time
-/*void buscar_tiempo_viaje_medio(travel_time_data *v){
-    if(v->sourceid != 0 && v->dstid != 0 && v->hod != 0){
-        printf("El tiempo de viaje medio es: %f", v->mean_travel_time);
-    }
-    else{
-        printf("No se ha ingresado origen, destino o hora");
-    }
 
-
-
-    HashTable table = { NULL, 0 };
-    table.num_buckets = 1160 * 1160;
-    table.buckets = (Node**) calloc(table.num_buckets, sizeof(Node*));
-
-    read_csv("datos.csv", &table);
-
-    int sourceid = 5;
-    int dstid = 451;
-    TravelData* data = lookup(&table, sourceid, dstid);
-    if (data != NULL) {
-        printf("Mean travel time from %d to %d:\n", sourceid, dstid);
-        for (int hod = 0; hod < NUM_HOURS; hod++) {
-            printf("%d: %.2f minutes\n", hod, data->mean_travel_time[hod]);
-}
-} else {
-printf("No data found for %d -> %d\n", sourceid, dstid);
-}
-// Free memory
-for (int i = 0; i < table.num_buckets; i++) {
-    Node* node = table.buckets[i];
-    while (node != NULL) {
-        Node* next_node = node->next;
-        free(node);
-        node = next_node;
-    }
-}
-free(table.buckets);
-
-return 0;
-
-
-}*/
