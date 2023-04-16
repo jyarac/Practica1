@@ -103,7 +103,7 @@ void save_table(hash_table *table, char *filename) {
     fclose(fp);
 }
 
-int main(int argc, char *argv[]) {
+int hashDocument(int argc, char *argv[]) {
     if (argc < 3) {
         fprintf(stderr, "Usage: %s <input_file> <output_file>\n", argv[0]);
         return EXIT_FAILURE;
