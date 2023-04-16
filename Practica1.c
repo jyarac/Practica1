@@ -5,60 +5,6 @@
 #include <unistd.h>
 // Definición de la estructura de datos para almacenar la información de tiempos de viaje
 
-
-// Función para leer los datos de tiempo de viaje desde un archivo csv y almacenarlos en un arreglo de estructuras de datos
-travel_time_data* read_travel_times_from_csv(char* filename, int* num_records) {
-    FILE* fp = fopen(filename, "r");
-    if (fp == NULL) {
-        printf("Error al abrir el archivo %s\n", filename);
-        exit(1);
-    }
-
-    // Contar el número de registros en el archivo
-    char line[1024];
-    int n = 0;
-    while (fgets(line, 1024, fp)) {
-        n++;
-    }
-    rewind(fp);
-
-    // Crear un arreglo de estructuras de datos para almacenar los registros
-    travel_time_data* data = (travel_time_data*)malloc(n * sizeof(travel_time_data));
-    if (data == NULL) {
-        printf("Error al asignar memoria\n");
-        exit(1);
-    }
-
-    // Leer los datos de cada registro en el archivo y almacenarlos en el arreglo
-    int i = 0;
-    while (fgets(line, 1024, fp)) {
-        char* tok;
-        tok = strtok(line, ",");
-        data[i].sourceid = atoi(tok);
-        tok = strtok(NULL, ",");
-        data[i].dstid = atoi(tok);
-        tok = strtok(NULL, ",");
-        data[i].hod = atoi(tok);
-        tok = strtok(NULL, ",");
-        data[i].mean_travel_time = atof(tok);
-        tok = strtok(NULL, ",");
-        data[i].standard_deviation_travel_time = atof(tok);
-        tok = strtok(NULL, ",");
-        data[i].geometric_mean_travel_time = atof(tok);
-        tok = strtok(NULL, ",");
-        data[i].geometric_standard_deviation_travel_time = atof(tok);
-        i++;
-    }
-
-    // Actualizar el número de registros leídos
-    *num_records = n;
-
-    // Cerrar el archivo
-    fclose(fp);
-
-    // Devolver el arreglo de datos
-    return data;
-}
 //create a function called ingresar origen that receives a pointer to a struct travel_time_data and wait for input, verifies if the input is between 1 and 1160, if it is, it saves the input on the struct, else it prints an error message
 void ingresar_origen(travel_time_data* v){
     int origen;
@@ -95,7 +41,6 @@ void ingresar_hora(travel_time_data* v){
         printf("La hora debe estar entre 0 y 23\n");
     }}
 
-
 int main() {
     
     //create a if statement that verifies if the file hash.bin exist if it does, it calls hashDocument function with parameters datos.csv, hash.bin and 1160, else it calls hashDocument function with parameters datos.csv, hash.bin and 1160
@@ -130,13 +75,11 @@ int main() {
              ingresar_origen(&viaje);
                 break;
             case 2:
-                // Código para ingresar destino
-                // ...
+
                 ingresar_destino(&viaje);
                 break;
             case 3:
-                // Código para ingresar hora
-                // ...
+
                 ingresar_hora(&viaje);
                 break;
             case 4:
