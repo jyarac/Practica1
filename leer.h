@@ -3,18 +3,18 @@
 #include <string.h>
 
 // Definición de la estructura de un nodo
-typedef struct Nodo {
+typedef struct Nodo_L {
     int sourceid;
     int dstid;
     int hod;
     float mean_travel_time;
-    struct Nodo* siguiente;
-} Nodo;
+    struct Nodo_L* siguiente;
+} Nodo_L;
 
 // Definición de la estructura de la tabla hash
 typedef struct HashTable {
     int tamano;
-    Nodo** tabla;
+    Nodo_L** tabla;
 } HashTable;
 
 // Función hash para calcular el índice
@@ -23,8 +23,8 @@ int funcion_hash(int sourceid, int dstid, int hod, int tamano) {
 }
 
 // Función para crear un nuevo nodo
-Nodo* crear_nodo(int sourceid, int dstid, int hod, float mean_travel_time) {
-    Nodo* nodo = (Nodo*)malloc(sizeof(Nodo));
+Nodo_L* crear_nodo(int sourceid, int dstid, int hod, float mean_travel_time) {
+    Nodo_L* nodo = (Nodo_L*)malloc(sizeof(Nodo_L));
     nodo->sourceid = sourceid;
     nodo->dstid = dstid;
     nodo->hod = hod;
@@ -39,13 +39,13 @@ void insertar(HashTable* tabla, int sourceid, int dstid, int hod, float mean_tra
     int indice = funcion_hash(sourceid, dstid, hod, tabla->tamano);
 
     // Crear un nuevo nodo
-    Nodo* nodo = crear_nodo(sourceid, dstid, hod, mean_travel_time);
+    Nodo_L* nodo = crear_nodo(sourceid, dstid, hod, mean_travel_time);
 
     // Insertar el nodo en la tabla hash
     if (tabla->tabla[indice] == NULL) {
         tabla->tabla[indice] = nodo;
     } else {
-        Nodo* actual = tabla->tabla[indice];
+        Nodo_L* actual = tabla->tabla[indice];
         while (actual->siguiente != NULL) {
             actual = actual->siguiente;
         }
@@ -54,12 +54,12 @@ void insertar(HashTable* tabla, int sourceid, int dstid, int hod, float mean_tra
 }
 
 // Función para buscar un nodo en la tabla hash
-Nodo* buscar(HashTable* tabla, int sourceid, int dstid, int hod) {
+Nodo_L* buscar(HashTable* tabla, int sourceid, int dstid, int hod) {
     // Calcular el índice de la tabla hash
     int indice = funcion_hash(sourceid, dstid, hod, tabla->tamano);
 
     // Buscar el nodo en la tabla hash
-    Nodo* actual = tabla->tabla[indice];
+    Nodo_L* actual = tabla->tabla[indice];
     while (actual != NULL) {
         if (actual->sourceid == sourceid && actual->dstid == dstid && actual->hod == hod) {
             return actual;
@@ -70,10 +70,10 @@ Nodo* buscar(HashTable* tabla, int sourceid, int dstid, int hod) {
 }
 
 // Función para buscar un nodo en el archivo binario
-Nodo* buscar_binario(FILE* binario, int sourceid, int dstid, int hod) {
+Nodo_L* buscar_binario(FILE* binario, int sourceid, int dstid, int hod) {
     // Buscar el nodo en el archivo binario
-    Nodo* nodo = (Nodo*)malloc(sizeof(Nodo));
-    while (fread(nodo, sizeof(Nodo), 1, binario) != 0) {
+    Nodo_L* nodo = (Nodo_L*)malloc(sizeof(Nodo_L));
+    while (fread(nodo, sizeof(Nodo_L), 1, binario) != 0) {
         if (nodo->sourceid == sourceid && nodo->dstid == dstid && nodo->hod == hod) {
             return nodo;
         }
@@ -81,6 +81,11 @@ Nodo* buscar_binario(FILE* binario, int sourceid, int dstid, int hod) {
     free(nodo);
     return NULL;
 }
+
+
+
+
+
 
 int main() {
     // Abrir el archivo binario para lectura
@@ -100,7 +105,7 @@ int main() {
     scanf("%d", &hod);
 
     // Buscar el nodo en el archivo binario
-    Nodo* nodo = buscar_binario(binario, sourceid, dstid, hod);
+    Nodo_L* nodo = buscar_binario(binario, sourceid, dstid, hod);
     if (nodo == NULL) {
         printf("No se encontró el nodo en el archivo binario\n");
     } else {
