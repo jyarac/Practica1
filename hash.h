@@ -2,183 +2,75 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_LINE_LENGTH 5024
-#define HASH_SIZE 116000
-typedef struct{
+// Definición de la estructura de un nodo
+typedef struct Nodo {
     int sourceid;
     int dstid;
     int hod;
     float mean_travel_time;
-    float standard_deviation_travel_time;
-    float geometric_mean_travel_time;
-    float geometric_standard_deviation_travel_time;
-} travel_time_data;
+} Nodo;
 
-typedef struct {
-    int sourceid;
-    int dstid;
-    int hod;
-    double mean_travel_time;
-} travel_data;
-
-typedef struct {
-    int key;
-    travel_data value;
-} hash_node;
-
-typedef struct {
-    int count;
-    hash_node nodes[HASH_SIZE];
-} hash_table;
-
-int hash_function(int key) {
-    return key % HASH_SIZE;
+// Función para crear un nuevo nodo
+Nodo* crear_nodo(int sourceid, int dstid, int hod, float mean_travel_time) {
+    Nodo* nodo = (Nodo*)malloc(sizeof(Nodo));
+    nodo->sourceid = sourceid;
+    nodo->dstid = dstid;
+    nodo->hod = hod;
+    nodo->mean_travel_time = mean_travel_time;
+    return nodo;
 }
 
-//Funciones de la antigua libreria leer
-
-void load_table(hash_table *table, char *filename) {
-    FILE *fp = fopen(filename, "rb");
-    if (fp == NULL) {
-        fprintf(stderr, "Error: could not open file '%s'\n", filename);
-        exit(EXIT_FAILURE);
+// Función principal
+int main() {
+    // Leer el archivo CSV
+    FILE* archivo = fopen("datos.csv", "r");
+    if (archivo == NULL) {
+        printf("Error al abrir el archivo\n");
+        return 1;
     }
 
-    fread(table, sizeof(hash_table), 1, fp);
-
-    fclose(fp);
-}
-travel_data *findl(hash_table *table, int sourceid, int dstid, int hod) {
-    int key = sourceid * HASH_SIZE + dstid;
-    int index = hash_function(key);
-    int i = index;
-    do {
-        if (table->nodes[i].key == 0) {
-            return NULL;
-        }
-        if (table->nodes[i].key == key &&
-            table->nodes[i].value.sourceid == sourceid &&
-            table->nodes[i].value.dstid == dstid &&
-            table->nodes[i].value.hod == hod) {
-            return &table->nodes[i].value;
-        }
-        i = (i + 1) % HASH_SIZE;
-    } while (i != index);
-    return NULL;
-}
-int search(int argc, char *argv[], travel_time_data travel) {
-    if (argc < 2) {
-        fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
-        return EXIT_FAILURE;
+    // Abrir el archivo binario para escritura
+    FILE* archivo_binario = fopen("binario.bin", "wb");
+    if (archivo_binario == NULL) {
+        printf("Error al abrir el archivo binario\n");
+        return 1;
     }
 
-    char *input_file = argv[1];
-
-    hash_table table = {0};
-    load_table(&table, input_file);
-
-    travel_data *data = findl(&table, travel.sourceid, travel.dstid, travel.hod);
-    if (data != NULL) {
-        printf("mean_travel_time = %.2f\n", data->mean_travel_time);
-    } else {
-        printf("NA\n");
-    }
-
-    return EXIT_SUCCESS;
-}
-
-
-//funciones de libreria hash-
-
-
-void insert(hash_table *table, int key, travel_data value) {
-    int index = hash_function(key);
-    int i = index;
-    do {
-        if (table->nodes[i].key == 0) {
-            table->nodes[i].key = key;
-            table->nodes[i].value = value;
-            table->count++;
-            return;
-        }
-        if (table->nodes[i].key == key) {
-            table->nodes[i].value = value;
-            return;
-        }
-        i = (i + 1) % HASH_SIZE;
-    } while (i != index);
-}
-
-travel_data *find(hash_table *table, int key) {
-    int index = hash_function(key);
-    int i = index;
-    do {
-        if (table->nodes[i].key == 0) {
-            return NULL;
-        }
-        if (table->nodes[i].key == key) {
-            return &table->nodes[i].value;
-        }
-        i = (i + 1) % HASH_SIZE;
-    } while (i != index);
-    return NULL;
-}
-
-void load_data(hash_table *table, char *filename) {
-    FILE *fp = fopen(filename, "r");
-    if (fp == NULL) {
-        fprintf(stderr, "Error: could not open file '%s'\n", filename);
-        exit(EXIT_FAILURE);
-    }
-
-    char line[MAX_LINE_LENGTH];
-    while (fgets(line, MAX_LINE_LENGTH, fp)) {
-        char *token;
+    // Leer cada línea del archivo CSV y escribirla en el archivo binario
+    char linea[1024];
+    while (fgets(linea, 1024, archivo)) {
         int sourceid, dstid, hod;
-        double mean_travel_time;
-
-        token = strtok(line, ",");
-        sourceid = atoi(token);
-
-        token = strtok(NULL, ",");
-        dstid = atoi(token);
-
-        token = strtok(NULL, ",");
-        hod = atoi(token);
-
-        token = strtok(NULL, ",");
-        mean_travel_time = atof(token);
-
-        travel_data data = {sourceid, dstid, hod, mean_travel_time};
-        insert(table, sourceid * HASH_SIZE + dstid, data);
+        float mean_travel_time;
+        sscanf(linea, "%d,%d,%d,%f", &sourceid, &dstid, &hod, &mean_travel_time);
+        Nodo* nodo = crear_nodo(sourceid, dstid, hod, mean_travel_time);
+        fwrite(nodo, sizeof(Nodo), 1, archivo_binario);
+        free(nodo);
     }
 
-    fclose(fp);
-}
-void save_table(hash_table *table, char *filename) {
-    FILE *fp = fopen(filename, "wb");
-    if (fp == NULL) {
-        fprintf(stderr, "Error: could not open file '%s'\n", filename);
-        exit(EXIT_FAILURE);
+    // Cerrar los archivos
+    fclose(archivo);
+    fclose(archivo_binario);
+
+    // Abrir el archivo binario para lectura
+    archivo_binario = fopen("binario.bin", "rb");
+    if (archivo_binario == NULL) {
+        printf("Error al abrir el archivo binario\n");
+        return 1;
     }
 
-    fwrite(table, sizeof(hash_table), 1, fp);
-
-    fclose(fp);
-}
-
-int hashDocument(int argc, char *argv[]) {
-    if (argc < 3) {
-        fprintf(stderr, "Usage: %s <input_file> <output_file>\n", argv[0]);
-        return EXIT_FAILURE;
+    // Buscar una relación en el archivo binario
+    Nodo nodo;
+    int buscado_sourceid = 620, buscado_dstid = 12, buscado_hod = 21;
+    fseek(archivo_binario, 0, SEEK_SET);  // Mover el puntero al inicio del archivo
+    while (fread(&nodo, sizeof(Nodo), 1, archivo_binario)) {
+        if (nodo.sourceid == buscado_sourceid && nodo.dstid == buscado_dstid && nodo.hod == buscado_hod) {
+            printf("Tiempo promedio desde 1 a 2 a las 10am: %f\n", nodo.mean_travel_time);
+            break;
+        }
     }
 
-    char *input_file = argv[1];
-    char *output_file = argv[2];
+    // Cerrar el archivo binario
+    fclose(archivo_binario);
 
-    hash_table table = {0};
-    load_data(&table, input_file);
-    save_table(&table, output_file);
-
-    return EXIT_SUCCESS;
+    return 0;
 }
