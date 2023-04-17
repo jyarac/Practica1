@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hash.h"
+#include "leer.h"
 #include <unistd.h>
 // Definición de la estructura de datos para almacenar la información de tiempos de viaje
 
