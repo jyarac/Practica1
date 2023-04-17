@@ -32,7 +32,7 @@ Nodo* crear_nodo(int sourceid, int dstid, int hod, float mean_travel_time) {
 }
 
 // Función principal
-int main() {
+int hashDocument() {
     // Leer el archivo CSV
     FILE* archivo = fopen("datos.csv", "r");
     if (archivo == NULL) {

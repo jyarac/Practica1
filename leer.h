@@ -23,7 +23,7 @@ int funcion_hash(int sourceid, int dstid, int hod, int tamano) {
 }
 
 // Función para crear un nuevo nodo
-Nodo_L* crear_nodo(int sourceid, int dstid, int hod, float mean_travel_time) {
+Nodo_L* crear_nodo_L(int sourceid, int dstid, int hod, float mean_travel_time) {
     Nodo_L* nodo = (Nodo_L*)malloc(sizeof(Nodo_L));
     nodo->sourceid = sourceid;
     nodo->dstid = dstid;
@@ -39,7 +39,7 @@ void insertar(HashTable* tabla, int sourceid, int dstid, int hod, float mean_tra
     int indice = funcion_hash(sourceid, dstid, hod, tabla->tamano);
 
     // Crear un nuevo nodo
-    Nodo_L* nodo = crear_nodo(sourceid, dstid, hod, mean_travel_time);
+    Nodo_L* nodo = crear_nodo_L(sourceid, dstid, hod, mean_travel_time);
 
     // Insertar el nodo en la tabla hash
     if (tabla->tabla[indice] == NULL) {
@@ -87,7 +87,7 @@ Nodo_L* buscar_binario(FILE* binario, int sourceid, int dstid, int hod) {
 
 
 
-int main() {
+int search() {
     // Abrir el archivo binario para lectura
     FILE* binario = fopen("binario.bin", "rb");
     if (binario == NULL) {

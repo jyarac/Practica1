@@ -85,8 +85,8 @@ int main() {
                 break;
             case 4:
                 //use the search function in the leer.h using the pointer to viaje
-                char *args[] = {"datos.csv", "tabla_hash.bin"};
-                search(2, args, viaje);
+                //char *args[] = {"datos.csv", "binario.bin"};
+                //search(2, args, viaje);
                 break;
             case 5:
                 // Salir del programa
