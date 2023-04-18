@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/time.h> 
+
 #define MAX_LINE_LENGTH 5024
 #define HASH_SIZE 1160
 // Definición de la estructura de un nodo
@@ -73,10 +75,15 @@ Nodo* buscar(HashTable* tabla, int sourceid, int dstid, int hod) {
 
 // Función para buscar un nodo en el archivo binario
 Nodo* buscar_binario(FILE* binario, int sourceid, int dstid, int hod) {
+    struct timeval inicio, fin;
+    gettimeofday(&inicio, NULL);
     // Buscar el nodo en el archivo binario
     Nodo* nodo = (Nodo*)malloc(sizeof(Nodo));
     while (fread(nodo, sizeof(Nodo), 1, binario) != 0) {
         if (nodo->sourceid == sourceid && nodo->dstid == dstid && nodo->hod == hod) {
+            gettimeofday(&fin, NULL); // Obtener el tiempo de fin de la búsqueda
+            double tiempo_transcurrido = (fin.tv_sec - inicio.tv_sec) + (fin.tv_usec - inicio.tv_usec) / 1000000.0; // Calcular el tiempo transcurrido en segundos
+            printf("\nTiempo busar_binario transcurrido: %.6f segundos\n", tiempo_transcurrido);
             return nodo;
         }
     }
@@ -122,6 +129,11 @@ int hashDocument(){
     return 0;
     }
 float search(int sourceid, int dstid, int hod) {
+    // Obtener el tiempo de inicio
+    struct timeval inicio;
+    gettimeofday(&inicio, NULL);
+    double tiempo_inicio = (double)inicio.tv_sec + (double)inicio.tv_usec / 1000000.0;
+
     // Abrir el archivo binario para lectura
     FILE* binario = fopen("binario.bin", "rb");
     if (binario == NULL) {
@@ -131,16 +143,28 @@ float search(int sourceid, int dstid, int hod) {
 
     // Pedir al usuario que ingrese los valores de sourceid, dstid y hod
 
-    // buscar_L el nodo en el archivo binario
+    // buscar el nodo en el archivo binario
     Nodo* nodo = buscar_binario(binario, sourceid, dstid, hod);
     if (nodo == NULL) {
         printf("NA\n");
+        
     } else {
         printf("Mean travel time: %f\n", nodo->mean_travel_time);
     }
 
     // Cerrar el archivo
     fclose(binario);
+
+    // Obtener el tiempo de fin
+    struct timeval fin;
+    gettimeofday(&fin, NULL);
+    double tiempo_fin = (double)fin.tv_sec + (double)fin.tv_usec / 1000000.0;
+
+    // Calcular el tiempo transcurrido en segundos
+    double tiempo_transcurrido = tiempo_fin - tiempo_inicio;
+
+    // Imprimir el tiempo transcurrido
+    printf("\nTiempo de search transcurrido: %f segundos\n", tiempo_transcurrido);
 
     return 0;
 }
