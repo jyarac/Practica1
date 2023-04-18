@@ -1,3 +1,3 @@
-dmirandam \n
-jomaldonadob \n
-jyarac \n
+dmirandam 
+jomaldonadob 
+jyarac 
