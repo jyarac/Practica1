@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hash.h"
-#include "leer.h"
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>

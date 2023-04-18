@@ -1,7 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#define MAX_LINE_LENGTH 5024
+#define HASH_SIZE 1160
 // Definición de la estructura de un nodo
 typedef struct Nodo {
     int sourceid;
@@ -70,7 +71,19 @@ Nodo* buscar(HashTable* tabla, int sourceid, int dstid, int hod) {
 }
 
 
-int hashDocument() {
+// Función para buscar un nodo en el archivo binario
+Nodo* buscar_binario(FILE* binario, int sourceid, int dstid, int hod) {
+    // Buscar el nodo en el archivo binario
+    Nodo* nodo = (Nodo*)malloc(sizeof(Nodo));
+    while (fread(nodo, sizeof(Nodo), 1, binario) != 0) {
+        if (nodo->sourceid == sourceid && nodo->dstid == dstid && nodo->hod == hod) {
+            return nodo;
+        }
+    }
+    free(nodo);
+    return NULL;
+}
+int hashDocument(){
     // Leer el archivo CSV
     FILE* archivo = fopen("datos.csv", "r");
     if (archivo == NULL) {
@@ -108,4 +121,3 @@ int hashDocument() {
 
     return 0;
 }
-
