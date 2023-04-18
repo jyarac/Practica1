@@ -1,1 +1,3 @@
-first commit xd
+dmirandam 
+jomaldonadob
+jyarac
