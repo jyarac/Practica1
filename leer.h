@@ -95,7 +95,7 @@ Nodo_L* buscar_binario(FILE* binario, int sourceid, int dstid, int hod) {
 
 
 
-int search(int sourceid, int dstid, int hod) {
+float search(int sourceid, int dstid, int hod) {
     // Abrir el archivo binario para lectura
     FILE* binario = fopen("binario.bin", "rb");
     if (binario == NULL) {
