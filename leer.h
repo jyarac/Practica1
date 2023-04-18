@@ -1,7 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+typedef struct{
+    int sourceid;
+    int dstid;
+    int hod;
+    float mean_travel_time;
+    float standard_deviation_travel_time;
+    float geometric_mean_travel_time;
+    float geometric_standard_deviation_travel_time;
+} travel_time_data;
 // Definición de la estructura de un nodo
 typedef struct Nodo_L {
     int sourceid;
@@ -87,7 +95,7 @@ Nodo_L* buscar_binario(FILE* binario, int sourceid, int dstid, int hod) {
 
 
 
-int search() {
+int search(int sourceid, int dstid, int hod) {
     // Abrir el archivo binario para lectura
     FILE* binario = fopen("binario.bin", "rb");
     if (binario == NULL) {
@@ -96,13 +104,6 @@ int search() {
     }
 
     // Pedir al usuario que ingrese los valores de sourceid, dstid y hod
-    int sourceid, dstid, hod;
-    printf("Ingrese sourceid: ");
-    scanf("%d", &sourceid);
-    printf("Ingrese dstid: ");
-    scanf("%d", &dstid);
-    printf("Ingrese hod: ");
-    scanf("%d", &hod);
 
     // Buscar el nodo en el archivo binario
     Nodo_L* nodo = buscar_binario(binario, sourceid, dstid, hod);

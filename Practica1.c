@@ -6,60 +6,53 @@
 #include <unistd.h>
 // Definición de la estructura de datos para almacenar la información de tiempos de viaje
 
-//create a function called ingresar origen that receives a pointer to a struct travel_time_data and wait for input, verifies if the input is between 1 and 1160, if it is, it saves the input on the struct, else it prints an error message
-void ingresar_origen(travel_time_data* v){
-    int origen;
-    printf("Ingrese el origen: \n");
-    scanf("%d", &origen);
-    if(origen >= 1 && origen <= 1160){
-        v->sourceid = origen;
-    }
-    else{
-        printf("El origen debe estar entre 1 y 1160\n");
-    }
-}
-//create a function called ingresar destino that receives a pointer to a struct travel_time_data and wait for input, verifies if the input is between 1 and 1160, if it is, it saves the input on the struct, else it prints an error message
-void ingresar_destino(travel_time_data* v){
-    int destino;
-    printf("Ingrese el destino: \n");
-    scanf("%d", &destino);
-    if(destino >= 1 && destino <= 1160){
-        v->dstid = destino;
-    }
-    else{
-        printf("El destino debe estar entre 1 y 1160\n");
+//create a function called ingresar origen that receives a pointer to a integer and wait for input,verifies if the input is between 1 and 1160, the input is saved on the integer else it prints an error message
+void ingresar_origen(int* sourceid) {
+    int input;
+    printf("Ingrese el origen:");
+    scanf("%d", &input);
+    if (input >= 1 && input <= 1160) {
+        *sourceid = input; // save input to the integer pointed by ptr
+    } else {
+        printf("Error: el valor ingresado no está entre 1 y 1160.\n");
     }
 }
-//create a function called ingresar hora that receives a pointer to a struct travel_time_data and wait for input, verifies if the input is between 0 and 23, if it is, it saves the input on the struct, else it prints an error message
-void ingresar_hora(travel_time_data* v){
-    int hora;
-    printf("Ingrese la hora: \n");
-    scanf("%d", &hora);
-    if(hora >= 0 && hora <= 23){
-        v->hod = hora;
+//create a function called ingresar destino that receives a pointer to a integer and wait for input,verifies if the input is between 1 and 1160, the input is saved on the integer else it prints an error message
+void ingresar_destino(int* dstid) {
+    int input;
+    printf("Ingrese el destino:");
+    scanf("%d", &input);
+    if (input >= 1 && input <= 1160) {
+        *dstid = input; // save input to the integer pointed by ptr
+    } else {
+        printf("Error: el valor ingresado no está entre 1 y 1160.\n");
     }
-    else{
-        printf("La hora debe estar entre 0 y 23\n");
-    }}
+}
+//create a function called ingresar hora that receives a pointer to a integer and wait for input,verifies if the input is between 0 and 23, the input is saved on the integer else it prints an error message
+void ingresar_hora(int* hod) {
+    int input;
+    printf("Ingrese la hora:");
+    scanf("%d", &input);
+    if (input >= 0 && input <= 23) {
+        *hod = input; // save input to the integer pointed by ptr
+    } else {
+        printf("Error: el valor ingresado no está entre 0 y 23.\n");
+    }
+}
 
 int main() {
     
     //create a if statement that verifies if the file hash.bin exist if it does, it calls hashDocument function with parameters datos.csv, hash.bin and 1160, else it calls hashDocument function with parameters datos.csv, hash.bin and 1160
-    if (access("tabla_hash.bin", F_OK) == -1) {
-        char *args[] = {"hashDocument", "datos.csv", "tabla_hash.bin", NULL};
-        int argc = sizeof(args) / sizeof(char *) - 1;
-        hashDocument(argc, args);
-        //print 'document hashed'
-        printf("Document hashed\n");
+    hashDocument();
+    //print document hashed
+    printf("Document hashed\n");
 
-    }
     // Menú de opciones
     int option = 0;
     int sourceid = 0;
     int dstid = 0;
     int hod = 0;
     float mean_travel_time = 0.0;
-    travel_time_data viaje;
 
     //declare a pointer to v
     while (option != 5) {
@@ -73,20 +66,19 @@ int main() {
         scanf("%d", &option);
     switch (option) {
             case 1:
-             ingresar_origen(&viaje);
+             ingresar_origen(&sourceid);
                 break;
             case 2:
 
-                ingresar_destino(&viaje);
+                ingresar_destino(&dstid);
                 break;
             case 3:
 
-                ingresar_hora(&viaje);
+                ingresar_hora(&hod);
                 break;
             case 4:
-                //use the search function in the leer.h using the pointer to viaje
-                //char *args[] = {"datos.csv", "binario.bin"};
-                //search(2, args, viaje);
+                // Buscar tiempo de viaje medio usando la funcion search de la libreria hash
+                search(sourceid, dstid, hod);
                 break;
             case 5:
                 // Salir del programa

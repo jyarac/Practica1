@@ -3,16 +3,6 @@
 #include <string.h>
 
 
-typedef struct{
-    int sourceid;
-    int dstid;
-    int hod;
-    float mean_travel_time;
-    float standard_deviation_travel_time;
-    float geometric_mean_travel_time;
-    float geometric_standard_deviation_travel_time;
-} travel_time_data;
-
 // Definición de la estructura de un nodo
 typedef struct Nodo {
     int sourceid;
