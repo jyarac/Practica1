@@ -6,13 +6,12 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-
 // Definición de la estructura de datos para almacenar la información de tiempos de viaje
 
 //create a function called ingresar origen that receives a pointer to a integer and wait for input,verifies if the input is between 1 and 1160, the input is saved on the integer else it prints an error message
 void ingresar_origen(int* sourceid) {
     int input;
-    printf("Ingrese el origen:");
+    printf("Ingrese ID del origen:");
     scanf("%d", &input);
     if (input >= 1 && input <= 1160) {
         *sourceid = input; // save input #include <unistd.h>
@@ -24,7 +23,7 @@ void ingresar_origen(int* sourceid) {
 //create a function called ingresar destino that receives a pointer to a integer and wait for input,verifies if the input is between 1 and 1160, the input is saved on the integer else it prints an error message
 void ingresar_destino(int* dstid) {
     int input;
-    printf("Ingrese el destino:");
+    printf("Ingrese ID del destino:");
     scanf("%d", &input);
     if (input >= 1 && input <= 1160) {
         *dstid = input; // save input to the integer pointed by ptr
@@ -35,7 +34,7 @@ void ingresar_destino(int* dstid) {
 //create a function called ingresar hora that receives a pointer to a integer and wait for input,verifies if the input is between 0 and 23, the input is saved on the integer else it prints an error message
 void ingresar_hora(int* hod) {
     int input;
-    printf("Ingrese la hora:");
+    printf("Ingrese hora del dia:");
     scanf("%d", &input);
     if (input >= 0 && input <= 23) {
         *hod = input; // save input to the integer pointed by ptr

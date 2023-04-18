@@ -136,7 +136,7 @@ float search(int sourceid, int dstid, int hod) {
     if (nodo == NULL) {
         printf("NA\n");
     } else {
-        printf("Mean travel time: %f\n", nodo->mean_travel_time);
+        printf("Tiempo de viaje medio: %f\n", nodo->mean_travel_time);
     }
 
     // Cerrar el archivo
