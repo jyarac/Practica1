@@ -1,4 +1,4 @@
-# Hashing, and proccess forking
+# Hashing and proccess forking
 this project is an example of proccess comunication using pipes.
 uses a uber dataset with travel times between many destinations, at various hours of the day
 Hash the dataset in order to make faster petitions.
